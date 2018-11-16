@@ -1,6 +1,5 @@
 // Project-Type
 apply plugin: "c"
-apply plugin: "cpp"
 
 model {
     components {
@@ -11,26 +10,14 @@ model {
                 targetPlatform "x86"
             }
 
-            sources.cpp {
-                source {
-                    srcDirs "lzma-sdk"
-                    include "CPP/Common/**/*.cpp"
-                }
-                exportedHeaders {
-                    srcDirs "lzma-sdk"
-                    include "CPP/Common/**/*.h"
-                    include "C/**/*.h"
-                }
-            }
-            
             sources.c {
                 source {
-                    srcDirs "lzma-sdk"
-                    include "C/**/*.c"
+                    srcDirs "lzma-sdk-c"
+                    include "**/*.c"
                 }
                 exportedHeaders {
-                    srcDirs "lzma-sdk"
-                    include "C/**/*.h"
+                    srcDirs "lzma-sdk-c"
+                    include "**/*.h"
                 }
             }
         }
@@ -42,13 +29,13 @@ model {
         }
         withType(StaticLibraryBinarySpec) {
             if (toolChain in Gcc) {
-                cppCompiler.args "-std=c++1y", "-w", "-Ofast", "-g0"
+                cppCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in Clang) {
-                cppCompiler.args "-std=c++1y", "-w", "-Ofast", "-g0"
+                cppCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in VisualCpp) {
-                cppCompiler.args "/std:c++14", "/W0", "/EHsc", "/O2"
+                cppCompiler.args "/W0", "/EHsc", "/O2"
             }
         }
     }
