@@ -51,7 +51,7 @@ model {
     }
 
     components {
-        ygo_win_counter(NativeLibrarySpec) {
+        ygo_win_counter(NativeExecutableSpec) {
             if(System.properties['sun.arch.data.model'] == "64") {
                 targetPlatform "x64"
             } else {

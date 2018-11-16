@@ -1,4 +1,5 @@
 // Project-Type
+apply plugin: "c"
 apply plugin: "cpp"
 
 model {
@@ -12,14 +13,24 @@ model {
 
             sources.cpp {
                 source {
-                    srcDirs "lzma-sdk-cpp"
-                    include "7zip/**/*.cpp"
-                    include "Common/**/*.cpp"
+                    srcDirs "lzma-sdk"
+                    include "CPP/Common/**/*.cpp"
                 }
                 exportedHeaders {
-                    srcDirs "lzma-sdk-cpp"
-                    include "7zip/**/*.h"
-                    include "Common/**/*.h"
+                    srcDirs "lzma-sdk"
+                    include "CPP/Common/**/*.h"
+                    include "C/**/*.h"
+                }
+            }
+            
+            sources.c {
+                source {
+                    srcDirs "lzma-sdk"
+                    include "C/**/*.c"
+                }
+                exportedHeaders {
+                    srcDirs "lzma-sdk"
+                    include "C/**/*.h"
                 }
             }
         }
