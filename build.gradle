@@ -1,0 +1,122 @@
+import java.util.stream.Stream
+import java.util.regex.Pattern
+import java.nio.file.Paths
+import java.nio.file.Files
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.13.0"
+    }
+}
+
+// Project-Type
+apply plugin: "cpp"
+// IDEs
+apply plugin: "visual-studio"
+
+apply plugin: "com.diffplug.gradle.spotless"
+
+allprojects {
+    model {
+        platforms {
+            x86 {
+                architecture "x86"
+            }
+            x64 {
+                architecture "x64"
+            }
+        }
+
+        buildTypes {
+            debug
+            release
+        }
+    } 
+}
+
+model {
+    visualStudio {
+        solution {
+            solutionFile.location = ".vs/${name}.sln"
+            solutionFile.withContent { TextProvider content ->
+                content.asBuilder().insert(0, "# GENERATED FILE: DO NOT EDIT\n")
+                content.text = content.text.replaceAll("HideSolutionNode = FALSE", "HideSolutionNode = TRUE")
+            }
+        }
+    }
+
+    components {
+        ygo_win_counter(NativeLibrarySpec) {
+            if(System.properties['sun.arch.data.model'] == "64") {
+                targetPlatform "x64"
+            } else {
+                targetPlatform "x86"
+            }
+
+            sources.cpp {
+                source {
+                    srcDirs "src"
+                    include "**/*.cpp"
+                }
+                exportedHeaders {
+                    srcDirs "src"
+                    include "**/*.hpp"
+                }
+            }
+        }
+    }
+    
+    binaries {
+        all {
+            if (toolChain in Gcc) {
+                cppCompiler.args "-std=c++1y", "-Wall", "-Wextra", "-Wpedantic", "-fPIC"
+            }
+            if (toolChain in Clang) {
+                cppCompiler.args "-std=c++1y", "-Weverything", "-pedantic"
+            }
+            if (toolChain in VisualCpp) {
+                cppCompiler.args "/std:c++14", "/W4", "/FS", "/EHsc"
+            }
+            
+            if(buildType == buildTypes.debug) {
+                cppCompiler.define "__DEBUG__"
+    
+                if (toolChain in Gcc) {
+                    cppCompiler.args "-Og", "-g3"
+                }
+                if (toolChain in Clang) {
+                    cppCompiler.args "-O0", "-g"
+                }
+                if (toolChain in VisualCpp) {
+                    cppCompiler.args "/Od", "/Z7"
+                }
+            }
+            if(buildType == buildTypes.release) {
+                cppCompiler.define "__NDEBUG__"
+    
+                if (toolChain in Gcc) {
+                    cppCompiler.args "-Ofast", "-g0"
+                }
+                if (toolChain in Clang) {
+                    cppCompiler.args "-Ofast", "-g0"
+                }
+                if (toolChain in VisualCpp) {
+                    cppCompiler.args "/O2"
+                }
+            }
+        }
+    }
+}
+
+spotless {
+    format "cpp", {
+        target "src/**/*.hpp", "src/**/*.cpp"
+
+        licenseHeaderFile "LICENSE-header.txt", "#"
+    }
+}
