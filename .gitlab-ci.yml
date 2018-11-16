@@ -1,0 +1,21 @@
+stages:
+- build
+- clean
+  
+build:
+  stage: build
+  script:
+  - ./gradlew clean
+  - ./gradlew build 
+  - du -h build/exe/anni/*/*
+  when: on_success
+  except:
+  - tags
+
+clean:
+  stage: clean
+  script:
+  - ./gradlew clean
+  when: always
+  except:
+  - tags
