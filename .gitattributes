@@ -5,4 +5,4 @@
 *.gradle  linguist-language=Groovy
 
 # No cheating
-lib/      linguist-vendored
+lib/*/    linguist-vendored

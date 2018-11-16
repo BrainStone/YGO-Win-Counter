@@ -1,0 +1,44 @@
+// Project-Type
+apply plugin: "cpp"
+
+model {
+    components {
+        lzma(NativeLibrarySpec) {
+            if(System.properties['sun.arch.data.model'] == "64") {
+                targetPlatform "x64"
+            } else {
+                targetPlatform "x86"
+            }
+
+            sources.cpp {
+                source {
+                    srcDirs "lzma-sdk-cpp"
+                    include "7zip/**/*.cpp"
+                    include "Common/**/*.cpp"
+                }
+                exportedHeaders {
+                    srcDirs "lzma-sdk-cpp"
+                    include "7zip/**/*.h"
+                    include "Common/**/*.h"
+                }
+            }
+        }
+    }
+    
+    binaries {
+        withType(SharedLibraryBinarySpec) {
+            buildable = false
+        }
+        withType(StaticLibraryBinarySpec) {
+            if (toolChain in Gcc) {
+                cppCompiler.args "-std=c++1y", "-w", "-Ofast", "-g0"
+            }
+            if (toolChain in Clang) {
+                cppCompiler.args "-std=c++1y", "-w", "-Ofast", "-g0"
+            }
+            if (toolChain in VisualCpp) {
+                cppCompiler.args "/std:c++14", "/W0", "/EHsc", "/O2"
+            }
+        }
+    }
+}

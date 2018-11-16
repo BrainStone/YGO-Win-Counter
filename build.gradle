@@ -68,7 +68,7 @@ model {
                     include "**/*.hpp"
                 }
                 
-                lib project: ":lib", library: "openNN", linkage: "static"
+                lib project: ":lib", library: "lzma", linkage: "static"
             }
         }
     }
