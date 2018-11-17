@@ -76,10 +76,12 @@ model {
     binaries {
         all {
             if (toolChain in Gcc) {
-                cppCompiler.args "-std=c++1z", "-Wall", "-Wextra", "-Wpedantic", "-fPIC", "-lstdc++fs"
+                cppCompiler.args "-std=c++1z", "-Wall", "-Wextra", "-Wpedantic", "-fPIC"
+                linker.args "-lstdc++fs"
             }
             if (toolChain in Clang) {
-                cppCompiler.args "-std=c++1z", "-Weverything", "-pedantic", "-lstdc++fs"
+                cppCompiler.args "-std=c++1z", "-Weverything", "-pedantic"
+                linker.args "-lstdc++fs"
             }
             if (toolChain in VisualCpp) {
                 cppCompiler.args "/std:c++17", "/W4", "/FS", "/EHsc"
