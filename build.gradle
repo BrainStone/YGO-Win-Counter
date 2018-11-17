@@ -80,7 +80,7 @@ model {
                 linker.args "-lstdc++fs"
             }
             if (toolChain in Clang) {
-                cppCompiler.args "-std=c++1z", "-Weverything", "-pedantic"
+                cppCompiler.args "-std=c++17", "-Weverything", "-pedantic"
                 linker.args "-lstdc++fs"
             }
             if (toolChain in VisualCpp) {
