@@ -59,26 +59,13 @@ matrix:
     - os: linux
       addons:
         apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
           packages:
-            - clang
-      before_install:
-        - eval "${MATRIX_EVAL}"
-        - $CC --version
-        - $CXX --version
+            - clang-4.0
       env:
-        - BUILD_NAME=Clang-3.4
-        - MATRIX_EVAL="export CC=clang && export CXX=clang++ && sudo apt-get remove gcc g++"
-    - os: osx
-      osx_image: xcode9.2
-      before_install:
-        - brew update
-        - rm '/usr/local/include/c++'
-        - brew install gcc
-        - eval "${MATRIX_EVAL}"
-        - $CC --version
-        - $CXX --version
-      env:
-        - MATRIX_EVAL="export CC=gcc && export CXX=g++"
+        - BUILD_NAME=Clang-4
+        - MATRIX_EVAL="export CC=clang-4.0 && export CXX=clang++-4.0 && sudo apt-get remove gcc g++"
     - os: linux
       addons:
         apt:
