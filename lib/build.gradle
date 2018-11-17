@@ -23,13 +23,7 @@ model {
                 }
                 exportedHeaders {
                     srcDirs "lzma-sdk-c"
-                    include "Alloc.h"
-                    include "LzFind.h"
-                    include "LzFindMt.h"
-                    include "LzmaDec.h"
-                    include "LzmaEnc.h"
                     include "LzmaLib.h"
-                    include "Threads.h"
                 }
             }
         }
@@ -41,9 +35,11 @@ model {
         }
         withType(StaticLibraryBinarySpec) {
             if (toolChain in Gcc) {
+                cCompiler.define "_7ZIP_ST"
                 cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in Clang) {
+                cCompiler.define "_7ZIP_ST"
                 cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in VisualCpp) {
