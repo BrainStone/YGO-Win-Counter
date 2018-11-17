@@ -48,7 +48,7 @@ private:
 	Blob data;
 
 public:
-	Replay( const std::filesystem::path& filename );
+	explicit Replay( const std::filesystem::path& filename );
 
 	virtual ReplayHeader& getHeader() noexcept;
 	virtual Blob& getData() noexcept;

@@ -21,7 +21,7 @@ std::string Replay::DecompressionError::getMessage( int code ) {
 	}
 }
 
-explicit Replay::DecompressionError::DecompressionError( int code )
+Replay::DecompressionError::DecompressionError( int code )
 	: std::runtime_error( "Error while decompressing: " + getMessage( code ) ),
 	_code( code ) {}
 
