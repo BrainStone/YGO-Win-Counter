@@ -4,14 +4,14 @@
 //
 #include <iostream>
 
-#include "Replay/ReplayReader.hpp"
+#include "Replay/Replay.hpp"
 
 int main() {
-	Replay replay = openReplay( "test.yrp" );
+	Replay replay( "test.yrp" );
 
 	std::basic_ofstream<byte> out( "decoded.yrp", std::ios_base::binary );
 
-	out.write( replay.data.c_str(), replay.data.size() );
+	out.write( replay.getData.c_str(), replay.getData().size() );
 
 	out.close();
 }
