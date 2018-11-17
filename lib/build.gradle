@@ -13,11 +13,23 @@ model {
             sources.c {
                 source {
                     srcDirs "lzma-sdk-c"
-                    include "**/*.c"
+                    include "Alloc.c"
+                    include "LzFind.c"
+                    include "LzFindMt.c"
+                    include "LzmaDec.c"
+                    include "LzmaEnc.c"
+                    include "LzmaLib.c"
+                    include "Threads.c"
                 }
                 exportedHeaders {
                     srcDirs "lzma-sdk-c"
-                    include "**/*.h"
+                    include "Alloc.h"
+                    include "LzFind.h"
+                    include "LzFindMt.h"
+                    include "LzmaDec.h"
+                    include "LzmaEnc.h"
+                    include "LzmaLib.h"
+                    include "Threads.h"
                 }
             }
         }
