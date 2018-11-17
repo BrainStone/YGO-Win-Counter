@@ -14,5 +14,5 @@ namespace std {
 }
 
 #else
-#	error Could not find system header \"<filesystem>\"
+#	error Could not find system header "<filesystem>" or "<experimental/filesystem>"
 #endif
