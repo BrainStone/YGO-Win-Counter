@@ -29,13 +29,13 @@ model {
         }
         withType(StaticLibraryBinarySpec) {
             if (toolChain in Gcc) {
-                cppCompiler.args "-w", "-Ofast", "-g0"
+                cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in Clang) {
-                cppCompiler.args "-w", "-Ofast", "-g0"
+                cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in VisualCpp) {
-                cppCompiler.args "/W0", "/EHsc", "/O2"
+                cCompiler.args "/W0", "/EHsc", "/O2"
             }
         }
     }
