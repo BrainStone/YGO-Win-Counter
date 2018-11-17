@@ -15,11 +15,9 @@ model {
                     srcDirs "lzma-sdk-c"
                     include "Alloc.c"
                     include "LzFind.c"
-                    include "LzFindMt.c"
                     include "LzmaDec.c"
                     include "LzmaEnc.c"
                     include "LzmaLib.c"
-                    include "Threads.c"
                 }
                 exportedHeaders {
                     srcDirs "lzma-sdk-c"
@@ -34,12 +32,12 @@ model {
             buildable = false
         }
         withType(StaticLibraryBinarySpec) {
+            cCompiler.define "_7ZIP_ST"
+
             if (toolChain in Gcc) {
-                cCompiler.define "_7ZIP_ST"
                 cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in Clang) {
-                cCompiler.define "_7ZIP_ST"
                 cCompiler.args "-w", "-Ofast", "-g0"
             }
             if (toolChain in VisualCpp) {
