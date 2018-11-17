@@ -7,7 +7,7 @@ build:
   script:
   - ./gradlew clean
   - ./gradlew build 
-  - du -h build/exe/anni/*/*
+  - du -h build/exe/ygo_win_counter/*/*
   when: on_success
   except:
   - tags
