@@ -15,10 +15,27 @@
 // Check if the header "<filesystem>" exists
 #	elif __has_include(<filesystem>)
 
-// If we're compiling on Visual Studio and are not compiling with C++17, we need use experimental
-#		if defined(_MSC_VER) && !(defined(_HAS_CXX17) && _HAS_CXX17)
-#			define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 1
-#		else
+// If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
+#		ifdef _MSC_VER
+
+// Check and include header that defines "_HAS_CXX17"
+#			if __has_include(<yvals_core.h>)
+#				include <yvals_core.h>
+
+// Check for enabled C++17 support
+#				if defined(_HAS_CXX17) && _HAS_CXX17
+// We're using C++17, so let's use the normal version
+#					define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 0
+#				endif
+#			endif
+
+// If the marco isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
+#			ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+#				define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 1
+#			endif
+
+// Not on Visual Studio. Let's use the normal version
+#		else // #ifdef _MSC_VER
 #			define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 0
 #		endif
 
