@@ -33,26 +33,30 @@ int Replay::DecompressionError::code() const noexcept {
 // https://github.com/Fluorohydride/ygopro/blob/7f02a0000df562e1232e413dc354283ddc23996d/gframe/replay.cpp#L141-L177
 
 Replay::Replay( const std::filesystem::path& filename ) {
-	BinaryStream replayFile( filename, std::ios_base::binary );
+	BinaryStream replayFile( filename, std::ios_base::binary | std::ios_base::ate );
 
-	replayFile.read( reinterpret_cast<byte*>(&header), sizeof( header ) );
-	data = Blob( std::istreambuf_iterator<byte>( replayFile ), {} );
+	const size_t fileSize = replayFile.tellg();
+	constexpr size_t headerSize = sizeof( header );
+	const size_t dataSize = fileSize - headerSize;
+
+	replayFile.seekg( 0 );
+	data.resize( dataSize );
+
+	replayFile.read( reinterpret_cast<byte*>(&header), headerSize );
+	replayFile.read( reinterpret_cast<byte*>(data.data()), dataSize );
 
 	replayFile.close();
 
 	if ( header.flag & REPLAY_COMPRESSED ) {
-		size_t compressedSize = data.size();
+		size_t compressedSize = dataSize;
+		Blob compressedData = std::move( data );
 		size_t replaySize = header.datasize;
-		byte* replayData = new byte[replaySize];
+		data = Blob( replaySize );
 
-		const int result = LzmaUncompress( replayData, &replaySize, data.c_str(), &compressedSize, header.props, 5 );
+		const int result = LzmaUncompress( data.data(), &replaySize, compressedData.data(), &compressedSize, header.props, 5 );
 
 		if ( result != SZ_OK )
 			throw DecompressionError( result );
-
-		data = Blob( replayData, replaySize );
-
-		delete[] replayData;
 	}
 }
 

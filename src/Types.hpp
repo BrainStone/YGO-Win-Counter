@@ -4,6 +4,9 @@
 //
 #pragma once
 
+#include <fstream>
+#include <vector>
+
 using byte = uint8_t;
-using Blob = std::basic_string<byte>;
+using Blob = std::vector<byte>;
 using BinaryStream = std::basic_ifstream<byte>;

@@ -11,7 +11,7 @@ int main() {
 
 	std::basic_ofstream<byte> out( "decoded.yrp", std::ios_base::binary );
 
-	out.write( replay.getData().c_str(), replay.getData().size() );
+	out.write( replay.getData().data(), replay.getData().size() );
 
 	out.close();
 }
