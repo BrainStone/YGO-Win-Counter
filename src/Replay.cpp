@@ -33,7 +33,7 @@ int Replay::DecompressionError::code() const noexcept {
 // https://github.com/Fluorohydride/ygopro/blob/7f02a0000df562e1232e413dc354283ddc23996d/gframe/replay.cpp#L141-L177
 
 Replay::Replay( const std::filesystem::path& filename ) {
-	BinaryStream replayFile( filename, std::ios_base::binary | std::ios_base::ate );
+	ByteIFStream replayFile( filename, std::ios_base::binary | std::ios_base::ate );
 
 	const size_t fileSize = replayFile.tellg();
 	constexpr size_t headerSize = sizeof( header );

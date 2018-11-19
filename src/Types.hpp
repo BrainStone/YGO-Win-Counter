@@ -9,4 +9,4 @@
 
 using byte = uint8_t;
 using Blob = std::vector<byte>;
-using BinaryStream = std::basic_ifstream<byte>;
+using ByteIFStream = std::basic_ifstream<byte>;
