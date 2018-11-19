@@ -5,8 +5,6 @@
 #pragma once
 
 #include "Filesystem.hpp"
-#include <fstream>
-#include <string>
 
 #include <LzmaLib.h>
 
@@ -43,7 +41,7 @@ public:
 		virtual int code() const noexcept;
 	};
 
-private:
+protected:
 	ReplayHeader header;
 	Blob data;
 
@@ -55,4 +53,10 @@ public:
 
 	virtual const ReplayHeader& getHeader() const noexcept;
 	virtual const Blob& getData() const noexcept;
+
+protected:
+	virtual void loadDataFromFile( const std::filesystem::path& filename );
+
+	virtual void loadFile( const std::filesystem::path& filename );
+	virtual void uncompressData();
 };

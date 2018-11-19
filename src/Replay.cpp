@@ -33,31 +33,7 @@ int Replay::DecompressionError::code() const noexcept {
 // https://github.com/Fluorohydride/ygopro/blob/7f02a0000df562e1232e413dc354283ddc23996d/gframe/replay.cpp#L141-L177
 
 Replay::Replay( const std::filesystem::path& filename ) {
-	ByteIFStream replayFile( filename, std::ios_base::binary | std::ios_base::ate );
-
-	const size_t fileSize = replayFile.tellg();
-	constexpr size_t headerSize = sizeof( header );
-	const size_t dataSize = fileSize - headerSize;
-
-	replayFile.seekg( 0 );
-	data.resize( dataSize );
-
-	replayFile.read( reinterpret_cast<byte*>(&header), headerSize );
-	replayFile.read( reinterpret_cast<byte*>(data.data()), dataSize );
-
-	replayFile.close();
-
-	if ( header.flag & REPLAY_COMPRESSED ) {
-		size_t compressedSize = dataSize;
-		Blob compressedData = std::move( data );
-		size_t replaySize = header.datasize;
-		data = Blob( replaySize );
-
-		const int result = LzmaUncompress( data.data(), &replaySize, compressedData.data(), &compressedSize, header.props, 5 );
-
-		if ( result != SZ_OK )
-			throw DecompressionError( result );
-	}
+	loadDataFromFile( filename );
 }
 
 Replay::ReplayHeader& Replay::getHeader() noexcept {
@@ -74,4 +50,40 @@ const Replay::ReplayHeader& Replay::getHeader() const noexcept {
 
 const Blob& Replay::getData() const noexcept {
 	return data;
+}
+
+void Replay::loadDataFromFile( const std::filesystem::path & filename ) {
+	loadFile( filename );
+
+	if ( header.flag & REPLAY_COMPRESSED ) {
+		uncompressData();
+	}
+}
+
+void Replay::loadFile( const std::filesystem::path & filename ) {
+	ByteIFStream replayFile( filename, std::ios_base::binary | std::ios_base::ate );
+
+	const size_t fileSize = replayFile.tellg();
+	constexpr size_t headerSize = sizeof( header );
+	const size_t dataSize = fileSize - headerSize;
+
+	replayFile.seekg( 0 );
+	data.resize( dataSize );
+
+	replayFile.read( reinterpret_cast<byte*>(&header), headerSize );
+	replayFile.read( reinterpret_cast<byte*>(data.data()), dataSize );
+
+	replayFile.close();
+}
+
+void Replay::uncompressData() {
+	size_t compressedSize = data.size();
+	Blob compressedData = std::move( data );
+	size_t replaySize = header.datasize;
+	data = Blob( replaySize );
+
+	const int result = LzmaUncompress( data.data(), &replaySize, compressedData.data(), &compressedSize, header.props, 5 );
+
+	if ( result != SZ_OK )
+		throw DecompressionError( result );
 }

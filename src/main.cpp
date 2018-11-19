@@ -14,4 +14,6 @@ int main() {
 	out.write( replay.getData().data(), replay.getData().size() );
 
 	out.close();
+
+	std::wcout << std::wstring( reinterpret_cast<const wchar_t*>(replay.getData().data()) ) << std::endl;
 }
