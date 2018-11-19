@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Filesystem.hpp"
+#include <string>
 
 #include <LzmaLib.h>
 
@@ -29,6 +30,25 @@ public:
 		byte props[8];
 	};
 
+	struct GameData {
+		// Best buddies <3
+		friend Replay;
+
+		std::wstring playerName1;
+		std::wstring playerName2;
+
+		int lifePoints;
+		int startHand;
+		int drawCount;
+		int options;
+
+	protected:
+		static std::wstring&& readPlayerName( const byte* data );
+		static int readInt( const byte* data );
+
+		virtual void readGameData( const byte* data );
+	};
+
 	class DecompressionError : public std::runtime_error {
 	private:
 		const int _code;
@@ -45,14 +65,22 @@ protected:
 	ReplayHeader header;
 	Blob data;
 
+	GameData gameData;
+
 public:
 	explicit Replay( const std::filesystem::path& filename );
+
 
 	virtual ReplayHeader& getHeader() noexcept;
 	virtual Blob& getData() noexcept;
 
+	virtual GameData& getGameData() noexcept;
+
+
 	virtual const ReplayHeader& getHeader() const noexcept;
 	virtual const Blob& getData() const noexcept;
+
+	virtual const GameData& getGameData() const noexcept;
 
 protected:
 	virtual void loadDataFromFile( const std::filesystem::path& filename );

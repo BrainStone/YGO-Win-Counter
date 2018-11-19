@@ -4,6 +4,31 @@
 //
 #include "Replay.hpp"
 
+std::wstring&& Replay::GameData::readPlayerName( const byte* data ) {
+	std::wstring result( reinterpret_cast<const wchar_t*>(data) );
+
+	if ( result.length() > 20 )
+		result.substr( 0, 20 );
+
+	return std::move( result );
+}
+
+int Replay::GameData::readInt( const byte* data ) {
+	return *reinterpret_cast<const int*>(data);
+}
+
+void Replay::GameData::readGameData( const byte* data ) {
+	size_t offset = 0;
+
+	playerName1 = readPlayerName( data + offset ); offset += 40;
+	playerName2 = readPlayerName( data + offset ); offset += 40;
+
+	lifePoints = readInt( data + offset ); offset += 4;
+	startHand = readInt( data + offset ); offset += 4;
+	drawCount = readInt( data + offset ); offset += 4;
+	options = readInt( data + offset ); offset += 4;
+}
+
 std::string Replay::DecompressionError::getMessage( int code ) {
 	switch ( code ) {
 	case SZ_OK:
@@ -44,6 +69,10 @@ Blob& Replay::getData() noexcept {
 	return data;
 }
 
+Replay::GameData& Replay::getGameData() noexcept {
+	return gameData;
+}
+
 const Replay::ReplayHeader& Replay::getHeader() const noexcept {
 	return header;
 }
@@ -52,12 +81,18 @@ const Blob& Replay::getData() const noexcept {
 	return data;
 }
 
+const Replay::GameData& Replay::getGameData() const noexcept {
+	return gameData;
+}
+
 void Replay::loadDataFromFile( const std::filesystem::path & filename ) {
 	loadFile( filename );
 
 	if ( header.flag & REPLAY_COMPRESSED ) {
 		uncompressData();
 	}
+
+	gameData.readGameData( data.data() );
 }
 
 void Replay::loadFile( const std::filesystem::path & filename ) {
