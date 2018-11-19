@@ -21,12 +21,12 @@ public:
 	// Taken and adapted from
 	// https://github.com/Fluorohydride/ygopro/blob/7f02a0000df562e1232e413dc354283ddc23996d/gframe/replay.h#L9-L22
 	struct ReplayHeader {
-		unsigned int id;
-		unsigned int version;
-		unsigned int flag;
-		unsigned int seed;
-		unsigned int datasize;
-		unsigned int hash;
+		uint32_t id;
+		uint32_t version;
+		uint32_t flag;
+		uint32_t seed;
+		uint32_t datasize;
+		uint32_t hash;
 		byte props[8];
 	};
 
@@ -37,14 +37,16 @@ public:
 		std::wstring playerName1;
 		std::wstring playerName2;
 
-		int lifePoints;
-		int startHand;
-		int drawCount;
-		int options;
+		uint32_t lifePoints;
+		uint32_t startHand;
+		uint32_t drawCount;
+		uint16_t options;
+		uint16_t duelRules;
 
 	protected:
-		static std::wstring&& readPlayerName( const byte* data );
-		static int readInt( const byte* data );
+		static std::wstring&& readPlayerName( const byte* data, size_t& offset );
+		static uint32_t readUint32( const byte* data, size_t& offset );
+		static uint16_t readUint16( const byte* data, size_t& offset );
 
 		virtual void readGameData( const byte* data );
 	};

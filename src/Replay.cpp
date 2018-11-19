@@ -4,8 +4,9 @@
 //
 #include "Replay.hpp"
 
-std::wstring&& Replay::GameData::readPlayerName( const byte* data ) {
-	std::wstring result( reinterpret_cast<const wchar_t*>(data) );
+std::wstring&& Replay::GameData::readPlayerName( const byte* data, size_t& offset ) {
+	std::wstring result( reinterpret_cast<const wchar_t*>(data + offset) );
+	offset += 40;
 
 	if ( result.length() > 20 )
 		result.substr( 0, 20 );
@@ -13,20 +14,31 @@ std::wstring&& Replay::GameData::readPlayerName( const byte* data ) {
 	return std::move( result );
 }
 
-int Replay::GameData::readInt( const byte* data ) {
-	return *reinterpret_cast<const int*>(data);
+uint32_t Replay::GameData::readUint32( const byte* data, size_t& offset ) {
+	uint32_t result = *reinterpret_cast<const uint32_t*>(data + offset);
+	offset += sizeof( uint32_t );
+
+	return result;
+}
+
+uint16_t Replay::GameData::readUint16( const byte* data, size_t& offset ) {
+	uint16_t result = *reinterpret_cast<const uint16_t*>(data + offset);
+	offset += sizeof( uint16_t );
+
+	return result;
 }
 
 void Replay::GameData::readGameData( const byte* data ) {
 	size_t offset = 0;
 
-	playerName1 = readPlayerName( data + offset ); offset += 40;
-	playerName2 = readPlayerName( data + offset ); offset += 40;
+	playerName1 = readPlayerName( data, offset );
+	playerName2 = readPlayerName( data, offset );
 
-	lifePoints = readInt( data + offset ); offset += 4;
-	startHand = readInt( data + offset ); offset += 4;
-	drawCount = readInt( data + offset ); offset += 4;
-	options = readInt( data + offset ); offset += 4;
+	lifePoints = readUint32( data,offset );
+	startHand = readUint32( data, offset );
+	drawCount = readUint32( data, offset );
+	options = readUint16( data, offset );
+	duelRules = readUint16( data, offset );
 }
 
 std::string Replay::DecompressionError::getMessage( int code ) {
